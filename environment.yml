@@ -1,0 +1,7 @@
+name: transformers-pyday
+channels:
+  - pytorch
+dependencies:
+  - python=3.11
+  - pytorch
+  - numpy
