@@ -7,16 +7,19 @@ Training variables
 BATCH_SIZE = 32
 
 # Number of optimization steps in the given batch
-TRAINING_STEPS = None
+TRAINING_STEPS = 20000
 
 # Number of steps to run before computing the evaluation data
-EVALUATION_INTERVAL = None
+EVALUATION_INTERVAL = 500
 
 # Number of inference steps for the given evaluation batch
-EVALUATION_ITERATIONS = None
+EVALUATION_ITERATIONS = 200
 
 # It's the size of the update after a single iteration of gradient descente
-LEARNING_RATE = None
+LEARNING_RATE = 1e-3
+
+# The number of characters to sample from the model
+SAMPLING_SIZE = 200
 
 """
 Data variables

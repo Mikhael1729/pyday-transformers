@@ -1,0 +1,50 @@
+step 0: train loss 4.7305, val loss 4.7241
+step 500: train loss 4.1777, val loss 4.1811
+step 1000: train loss 3.7309, val loss 3.7377
+step 1500: train loss 3.3827, val loss 3.3909
+step 2000: train loss 3.1246, val loss 3.1278
+step 2500: train loss 2.9429, val loss 2.9429
+step 3000: train loss 2.8009, val loss 2.8077
+step 3500: train loss 2.7122, val loss 2.7127
+step 4000: train loss 2.6468, val loss 2.6375
+step 4500: train loss 2.5979, val loss 2.5999
+step 5000: train loss 2.5601, val loss 2.5763
+step 5500: train loss 2.5363, val loss 2.5527
+step 6000: train loss 2.5334, val loss 2.5404
+step 6500: train loss 2.5158, val loss 2.5137
+step 7000: train loss 2.4994, val loss 2.5151
+step 7500: train loss 2.4843, val loss 2.5081
+step 8000: train loss 2.4808, val loss 2.4904
+step 8500: train loss 2.4745, val loss 2.4971
+step 9000: train loss 2.4676, val loss 2.4771
+step 9500: train loss 2.4660, val loss 2.4864
+step 10000: train loss 2.4729, val loss 2.4748
+step 10500: train loss 2.4664, val loss 2.4925
+step 11000: train loss 2.4672, val loss 2.4930
+step 11500: train loss 2.4619, val loss 2.4868
+step 12000: train loss 2.4558, val loss 2.4841
+step 12500: train loss 2.4676, val loss 2.4788
+step 13000: train loss 2.4555, val loss 2.4849
+step 13500: train loss 2.4497, val loss 2.4784
+step 14000: train loss 2.4483, val loss 2.4867
+step 14500: train loss 2.4610, val loss 2.4755
+step 15000: train loss 2.4494, val loss 2.4736
+step 15500: train loss 2.4472, val loss 2.4769
+step 16000: train loss 2.4590, val loss 2.4877
+step 16500: train loss 2.4629, val loss 2.4790
+step 17000: train loss 2.4557, val loss 2.4719
+step 17500: train loss 2.4600, val loss 2.4866
+step 18000: train loss 2.4540, val loss 2.4882
+step 18500: train loss 2.4587, val loss 2.4853
+step 19000: train loss 2.4664, val loss 2.4825
+step 19500: train loss 2.4546, val loss 2.4882
+
+Foasthaprse tize herst e.
+O d frnie hy:
+
+
+Hak, CORineg agnthe ther Masearor charnge?
+Ten,
+QUColy, chouspo in mpery way avend ouburser sickes bokecard dhiceny
+
+He tw el fe oupise he, lbustselownthous;
