@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-from variables import BLOCK_SIZE, N_EMBEDDINGS, VOCABULARY_SIZE
+from variables import BLOCK_SIZE, N_EMBEDDINGS, VOCABULARY_SIZE, device
 
 
 class BigramLanguageModel(nn.Module):
@@ -12,6 +12,9 @@ class BigramLanguageModel(nn.Module):
     # Maps tokens to learned vectors; tokens with similar next-token patterns
     # get similar embeddings.
     self.token_embeddings = nn.Embedding(VOCABULARY_SIZE, N_EMBEDDINGS)
+
+    # Encodes the position of each token in the secuence.
+    self.position_embeddings = nn.Embedding(BLOCK_SIZE, N_EMBEDDINGS)
 
     # Language modeling head (output layer). It converts the high-dimensional
     # embeddings into a probability distribution over the vocabulary to predict
@@ -27,11 +30,19 @@ class BigramLanguageModel(nn.Module):
       combination of words in encoded_words. For this it's expected to be of shape
       (B, C), same as encoded_words.
     """
+    b, c = encoded_words.shape
+
     # Obtain the scores to determine the most likely next token
     token_embeddings = self.token_embeddings(encoded_words) # (b, c, N_EMBEDDINGS)
 
+    # Get embeddings that encode the position (0 to c−1) of each token in the sequence.
+    position_embeddings = self.position_embeddings(torch.arange(c, device=device)) # (c, f)
+
+    # Agregate the embeddings into a single learnable set of features
+    combined_embeddings = token_embeddings + position_embeddings # (b, c, f)
+
     # Decode the given features to a series of scores for next token prediction
-    logits = self.lm_head(token_embeddings) # (b, c, VOCABULARY_SIZE)
+    logits = self.lm_head(combined_embeddings) # (b, c, VOCABULARY_SIZE)
 
     # Inference is requested
     if targets is None:

@@ -1,0 +1,47 @@
+step 0: train loss 4.4801, val loss 4.4801
+step 500: train loss 2.7250, val loss 2.7578
+step 1000: train loss 2.5893, val loss 2.6136
+step 1500: train loss 2.5470, val loss 2.5557
+step 2000: train loss 2.5184, val loss 2.5313
+step 2500: train loss 2.5152, val loss 2.5226
+step 3000: train loss 2.5005, val loss 2.5122
+step 3500: train loss 2.5017, val loss 2.5067
+step 4000: train loss 2.4970, val loss 2.4914
+step 4500: train loss 2.4926, val loss 2.5021
+step 5000: train loss 2.4835, val loss 2.5031
+step 5500: train loss 2.4772, val loss 2.5048
+step 6000: train loss 2.4949, val loss 2.5055
+step 6500: train loss 2.4847, val loss 2.4850
+step 7000: train loss 2.4786, val loss 2.5001
+step 7500: train loss 2.4708, val loss 2.5003
+step 8000: train loss 2.4689, val loss 2.4862
+step 8500: train loss 2.4699, val loss 2.4959
+step 9000: train loss 2.4670, val loss 2.4784
+step 9500: train loss 2.4681, val loss 2.4900
+step 10000: train loss 2.4743, val loss 2.4777
+step 10500: train loss 2.4717, val loss 2.4960
+step 11000: train loss 2.4735, val loss 2.4974
+step 11500: train loss 2.4700, val loss 2.4907
+step 12000: train loss 2.4656, val loss 2.4873
+step 12500: train loss 2.4732, val loss 2.4833
+step 13000: train loss 2.4635, val loss 2.4908
+step 13500: train loss 2.4572, val loss 2.4835
+step 14000: train loss 2.4567, val loss 2.4918
+step 14500: train loss 2.4712, val loss 2.4854
+step 15000: train loss 2.4574, val loss 2.4852
+step 15500: train loss 2.4527, val loss 2.4874
+step 16000: train loss 2.4669, val loss 2.4941
+step 16500: train loss 2.4714, val loss 2.4796
+step 17000: train loss 2.4671, val loss 2.4779
+step 17500: train loss 2.4694, val loss 2.4933
+step 18000: train loss 2.4619, val loss 2.4976
+step 18500: train loss 2.4689, val loss 2.4936
+step 19000: train loss 2.4794, val loss 2.4865
+step 19500: train loss 2.4656, val loss 2.4914
+
+Foasthaprse tice herst e.
+O d frnie hy toursk, CORineg agnthe ther Masearor charnge?
+Ten,
+re thy, chouspo is mpery way avend ouburser sickes bekecard dhiceny
+
+He tw el fe oupise he, le stselownthers;
