@@ -4,7 +4,7 @@ import torch
 Training variables
 """
 # Number of samples per gradiente update
-BATCH_SIZE = 2
+BATCH_SIZE = 32
 
 # Number of optimization steps in the given batch
 TRAINING_STEPS = None
@@ -25,10 +25,10 @@ Data variables
 BLOCK_SIZE = 8
 
 # The number of unique characters recognized by the model (See the Data class for more info)
-VOCABULARY_SIZE = None 
+VOCABULARY_SIZE = 65 
 
 # Size of the embeddings used to encode various kinds of information related to the data
-N_EMBEDDINGS = None
+N_EMBEDDINGS = 65
 
 """
 Network configuration

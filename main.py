@@ -1,44 +1,43 @@
 import torch
 
-from data import Data, Datasets, DatasetSplit
+from data import Data, Datasets
+from model import BigramLanguageModel
+from variables import device
 
 torch.manual_seed(1337) # For reproducibility
 
+
 def main():
   """
-  1. Data:
+  2. Basic model:
 
-  In this section, we show the raw and processed data that
-  the model will use for training.
+  The most basic model uses a list of embeddings to represent the semantic meaning
+  of different characters in order to predict the next one.
 
-  Review each line and its output to get a grasp of the
-  basic API for data handling in the project.
+  In this code snippet, you can see how to use the model to generate data.  
+  Notice that the model is currently generating gibberish, but later we will make
+  the architecture more elaborate to produce better predictions.
   """
+  global device
+
+  # Load the raw data
   data = Data("./input.txt")
   
-  # Let's see a chunk of the raw data
-  print(data.text[:175])
+  # Build the n-gram (arbitrary context lenght `n`) language model.
+  model = BigramLanguageModel()
+  model.to(device)
 
-  # This is a character-level language model, so with this we can visualize the encoding map
-  print(data.stoi)
+  # Initialize first_token as a zero representing the "\n" character with shape (b, c), 
+  # where b is the batch size (1) and c is the context length (1), as it's a single letter
+  first_token = torch.zeros((1, 1), dtype=torch.long, device=device)
 
-  # Vocabulary size
-  print(len(data.unique_chars))
+  # Generate 100 other tokens starting with first_token
+  generated_tokens = model.generate(first_token, 100)
 
-  # Encode the data acording to stoi and store it in a tensor
-  datasets = Datasets(torch.tensor(data.encode(data.text), dtype=torch.long))
+  # Extract the tokens from the first and only batch and convert it into a list of integers
+  generated_tokens = generated_tokens[0].tolist()
 
-  # Let's see a chunk of the processed training data
-  Xb, Yb = datasets.get_batch(DatasetSplit.train)
-  print(Xb)
-  print(Yb)
-
-  # Let's use the decode function to see it better:
-  print(data.decode(Xb[1].tolist()))
-  print(data.decode(Yb[1].tolist()))
-
-  # <-- Play with BLOCK_SIZE and BATCH_SIZE. If you reduce
-  #     BLOCK_SIZE to 1 it's a bigram model !-->
+  print(data.decode(generated_tokens))
 
 
 if __name__ == "__main__":
