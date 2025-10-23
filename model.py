@@ -9,11 +9,14 @@ class BigramLanguageModel(nn.Module):
   def __init__(self):
     super().__init__()
     
-    # For a bigram LM: each row of this embedding is a learned logit vector 
-    # over the vocabulary. Row i gives the unnormalized scores
-    # P(next_token | current_token = i).
+    # Maps tokens to learned vectors; tokens with similar next-token patterns
+    # get similar embeddings.
     self.token_embeddings = nn.Embedding(VOCABULARY_SIZE, N_EMBEDDINGS)
-    
+
+    # Language modeling head (output layer). It converts the high-dimensional
+    # embeddings into a probability distribution over the vocabulary to predict
+    # the next token
+    self.lm_head = nn.Linear(N_EMBEDDINGS, VOCABULARY_SIZE)
 
   def forward(self, encoded_words: torch.Tensor, targets: torch.Tensor | None = None) -> tuple[torch.Tensor, torch.Tensor]:
     """
@@ -25,7 +28,10 @@ class BigramLanguageModel(nn.Module):
       (B, C), same as encoded_words.
     """
     # Obtain the scores to determine the most likely next token
-    logits = self.token_embeddings(encoded_words) # (b, c, VOCABULARY_SIZE)
+    token_embeddings = self.token_embeddings(encoded_words) # (b, c, N_EMBEDDINGS)
+
+    # Decode the given features to a series of scores for next token prediction
+    logits = self.lm_head(token_embeddings) # (b, c, VOCABULARY_SIZE)
 
     # Inference is requested
     if targets is None:

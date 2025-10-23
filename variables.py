@@ -31,7 +31,7 @@ BLOCK_SIZE = 8
 VOCABULARY_SIZE = 65 
 
 # Size of the embeddings used to encode various kinds of information related to the data
-N_EMBEDDINGS = 65
+N_EMBEDDINGS = 32
 
 """
 Network configuration

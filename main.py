@@ -10,14 +10,13 @@ torch.manual_seed(1337) # For reproducibility
 
 def main():
   """
-  2. Basic model:
+  3. Basic model + basic level of interaction:
 
-  The most basic model uses a list of embeddings to represent the semantic meaning
-  of different characters in order to predict the next one.
+  This is the same code as the previous iteration, but with the added linear layer
+  in the architecture to map the features of the learned look-up table into scores
+  for next token prediction.
 
-  In this code snippet, you can see how to use the model to generate data.  
-  Notice that the model is currently generating gibberish, but later we will make
-  the architecture more elaborate to produce better predictions.
+  These changes don't improve the performance of the model.
   """
   global device
 
