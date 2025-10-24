@@ -10,13 +10,12 @@ torch.manual_seed(1337) # For reproducibility
 
 def main():
   """
-  6. Basic model + identities + positions + multi-head attention
+  7. Basic model + identities + positions + multi-head attention + feedforward network
 
-  We replace the self-attention head with multiple heads. Each focuses on different
-  aspects of the context of the given input to determine which token follows next,
-  given the vocabulary.
+  Add a level of analysis to the context extracted from the multi-head attention module
+  using a feedforward neural network
 
-  Run the code to see how much we reduced the validation loss!
+  Take a look to the reduced validation loss!
   """
   global device
 

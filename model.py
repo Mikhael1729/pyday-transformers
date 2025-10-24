@@ -4,6 +4,24 @@ from torch.nn import functional as F
 
 from variables import BLOCK_SIZE, N_EMBEDDINGS, VOCABULARY_SIZE, device, DROPOUT
 
+
+class Feedforward(nn.Module):
+  """
+  Applies a nonlinear transformation to the embeddings to refine and enrich their
+  representations
+  """
+  def __init__(self, n_embeddings: int):
+    super().__init__()
+
+    self.network = nn.Sequential(
+      nn.Linear(n_embeddings, n_embeddings),
+      nn.ReLU(),
+    )
+
+  def forward(self, encoded_words: torch.Tensor):
+    return self.network(encoded_words)
+
+
 class MultiheadAttention(nn.Module):
   """
   Multiple heads of self-attention in parallel
@@ -83,6 +101,8 @@ class BigramLanguageModel(nn.Module):
     # subspaces for keys, queries, and values.
     self.self_attention_heads = MultiheadAttention(4, N_EMBEDDINGS // 4)
 
+    self.feedforward = Feedforward(N_EMBEDDINGS)
+
     # Language modeling head (output layer). It converts the high-dimensional
     # embeddings into a probability distribution over the vocabulary to predict
     # the next token
@@ -100,7 +120,7 @@ class BigramLanguageModel(nn.Module):
     b, c = encoded_words.shape
 
     # Obtain the scores to determine the most likely next token
-    token_embeddings = self.token_embeddings(encoded_words) # (b, c, N_EMBEDDINGS)
+    token_embeddings = self.token_embeddings(encoded_words) # (b, c, N_EMBEDDINGS).
 
     # Get embeddings that encode the position (0 to c−1) of each token in the sequence.
     position_embeddings = self.position_embeddings(torch.arange(c, device=device)) # (c, f)
@@ -110,6 +130,11 @@ class BigramLanguageModel(nn.Module):
 
     # Encode the information of previous tokens in a data dependent way
     combined_embeddings = self.self_attention_heads(combined_embeddings) # (b, c, f)
+
+    # Take each feature extracted from the previous step (the self attention head)
+    # of shape (b, c, f) and perform a non linear operation to refine, reinterpret
+    # the given information extracted from the attention heads.
+    combined_embeddings = self.feedforward(combined_embeddings) # (b, c, f)
 
     # Decode the given features to a series of scores for next token prediction
     logits = self.lm_head(combined_embeddings) # (b, c, VOCABULARY_SIZE)
