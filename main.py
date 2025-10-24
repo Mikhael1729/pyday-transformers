@@ -10,13 +10,13 @@ torch.manual_seed(1337) # For reproducibility
 
 def main():
   """
-  5. Basic model + identities + positions + dot product attention:
+  6. Basic model + identities + positions + multi-head attention
 
-  In model.py we implement the dot product attention (decoder self attention head)
-  into BigramLanguageModel to make the model able to make predictions based on
-  previous tokens, in a data dependent way.
+  We replace the self-attention head with multiple heads. Each focuses on different
+  aspects of the context of the given input to determine which token follows next,
+  given the vocabulary.
 
-  Run the code and start observing how much the validation loss decreases!
+  Run the code to see how much we reduced the validation loss!
   """
   global device
 

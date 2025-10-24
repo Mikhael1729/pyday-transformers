@@ -4,6 +4,23 @@ from torch.nn import functional as F
 
 from variables import BLOCK_SIZE, N_EMBEDDINGS, VOCABULARY_SIZE, device, DROPOUT
 
+class MultiheadAttention(nn.Module):
+  """
+  Multiple heads of self-attention in parallel
+  """
+  def __init__(self, num_heads: int, head_size: int):
+    super().__init__()
+    # Each self-attention head learns to focus on different types of contextual
+    # relationships between the current token (nᵗʰ position) and the tokens in
+    # its available context, in order to estimate which of them carry more
+    # weight for predicting the next token.
+    self.heads = nn.ModuleList([Head(head_size) for _ in range(num_heads)])
+
+  def forward(self, encoded_words: torch.Tensor):
+    # The concatenation is done in the features or channel dimension
+    return torch.cat([head(encoded_words) for head in self.heads], dim=-1) 
+
+
 class Head(nn.Module):
   """
   Single head of self-attention
@@ -56,8 +73,15 @@ class BigramLanguageModel(nn.Module):
     # Encodes the position of each token in the secuence.
     self.position_embeddings = nn.Embedding(BLOCK_SIZE, N_EMBEDDINGS)
 
-    # Encodes the information of the input data of previous tokens as context
-    self.self_attention_head = Head(N_EMBEDDINGS)
+    # Multi-head self-attention mechanism.
+    # It allows each token to attend to previous tokens, integrating contextual
+    # information from earlier positions in the sequence. The attention layer is
+    # divided into 4 parallel heads, each with its own projection space of size
+    # N_EMBEDDINGS // 4 = 8. This setup reduces the dimensionality per head
+    # while preserving the total embedding size (32), enabling the model to
+    # capture different types of relationships among tokens through separate
+    # subspaces for keys, queries, and values.
+    self.self_attention_heads = MultiheadAttention(4, N_EMBEDDINGS // 4)
 
     # Language modeling head (output layer). It converts the high-dimensional
     # embeddings into a probability distribution over the vocabulary to predict
@@ -85,7 +109,7 @@ class BigramLanguageModel(nn.Module):
     combined_embeddings = token_embeddings + position_embeddings # (b, c, f)
 
     # Encode the information of previous tokens in a data dependent way
-    combined_embeddings = self.self_attention_head(combined_embeddings) # (b, c, f)
+    combined_embeddings = self.self_attention_heads(combined_embeddings) # (b, c, f)
 
     # Decode the given features to a series of scores for next token prediction
     logits = self.lm_head(combined_embeddings) # (b, c, VOCABULARY_SIZE)
