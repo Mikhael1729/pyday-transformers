@@ -5,6 +5,31 @@ from torch.nn import functional as F
 from variables import BLOCK_SIZE, N_EMBEDDINGS, VOCABULARY_SIZE, device, DROPOUT
 
 
+class Block(nn.Module):
+  """
+  The transformer block contains a multi-head attention module and a feedforward network,
+  effectively encapsulating within a single entity both the contextual information provided
+  by the self-attention heads and the analysis or computation performed by the feedforward
+  network.
+  """
+  def __init__(self, n_embeddings, n_heads):
+    super().__init__()
+
+    head_size = n_embeddings // n_heads
+
+    self.self_attention = MultiheadAttention(n_heads, head_size)
+    self.feedforward = Feedforward(n_embeddings)
+
+  def forward(self, encoded_words: torch.Tensor):
+    # Performs the extraction of contextual information
+    encoded_words = self.self_attention(encoded_words)
+
+    # Applies the analysis or computation used for next token prediction
+    encoded_words = self.feedforward(encoded_words)
+
+    return encoded_words
+
+
 class Feedforward(nn.Module):
   """
   Applies a nonlinear transformation to the embeddings to refine and enrich their
@@ -91,17 +116,12 @@ class BigramLanguageModel(nn.Module):
     # Encodes the position of each token in the secuence.
     self.position_embeddings = nn.Embedding(BLOCK_SIZE, N_EMBEDDINGS)
 
-    # Multi-head self-attention mechanism.
-    # It allows each token to attend to previous tokens, integrating contextual
-    # information from earlier positions in the sequence. The attention layer is
-    # divided into 4 parallel heads, each with its own projection space of size
-    # N_EMBEDDINGS // 4 = 8. This setup reduces the dimensionality per head
-    # while preserving the total embedding size (32), enabling the model to
-    # capture different types of relationships among tokens through separate
-    # subspaces for keys, queries, and values.
-    self.self_attention_heads = MultiheadAttention(4, N_EMBEDDINGS // 4)
-
-    self.feedforward = Feedforward(N_EMBEDDINGS)
+    # Performs the extraction of contextual information and the analysis of it
+    self.blocks = nn.Sequential(
+      Block(N_EMBEDDINGS, n_heads=4),
+      Block(N_EMBEDDINGS, n_heads=4),
+      Block(N_EMBEDDINGS, n_heads=4),
+    )
 
     # Language modeling head (output layer). It converts the high-dimensional
     # embeddings into a probability distribution over the vocabulary to predict
@@ -128,13 +148,8 @@ class BigramLanguageModel(nn.Module):
     # Agregate the embeddings into a single learnable set of features
     combined_embeddings = token_embeddings + position_embeddings # (b, c, f)
 
-    # Encode the information of previous tokens in a data dependent way
-    combined_embeddings = self.self_attention_heads(combined_embeddings) # (b, c, f)
-
-    # Take each feature extracted from the previous step (the self attention head)
-    # of shape (b, c, f) and perform a non linear operation to refine, reinterpret
-    # the given information extracted from the attention heads.
-    combined_embeddings = self.feedforward(combined_embeddings) # (b, c, f)
+    # Includes the contextual information of the input into combined_embeddings
+    combined_embeddings = self.blocks(combined_embeddings)
 
     # Decode the given features to a series of scores for next token prediction
     logits = self.lm_head(combined_embeddings) # (b, c, VOCABULARY_SIZE)

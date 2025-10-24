@@ -10,12 +10,16 @@ torch.manual_seed(1337) # For reproducibility
 
 def main():
   """
-  7. Basic model + identities + positions + multi-head attention + feedforward network
+  8. Basic model + identities + positions + Transformer blocks
 
-  Add a level of analysis to the context extracted from the multi-head attention module
-  using a feedforward neural network
+  Encapsulates the processes of context extraction and contextual analysis within a
+  single entity called a "transformer block."
 
-  Take a look to the reduced validation loss!
+  We implemented three transformer blocks, but they did not improve the model’s
+  performance—quite the opposite. Why? The network is becoming relatively deep,
+  and deeper neural nets often suffer from optimization issues.
+
+  Run the code and observe how the validation loss decreases!
   """
   global device
 
