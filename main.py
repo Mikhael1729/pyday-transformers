@@ -10,13 +10,13 @@ torch.manual_seed(1337) # For reproducibility
 
 def main():
   """
-  3. Basic model + basic level of interaction:
+  5. Basic model + identities + positions + dot product attention:
 
-  This is the same code as the previous iteration, but with the added linear layer
-  in the architecture to map the features of the learned look-up table into scores
-  for next token prediction.
+  In model.py we implement the dot product attention (decoder self attention head)
+  into BigramLanguageModel to make the model able to make predictions based on
+  previous tokens, in a data dependent way.
 
-  These changes don't improve the performance of the model.
+  Run the code and start observing how much the validation loss decreases!
   """
   global device
 

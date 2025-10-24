@@ -7,7 +7,7 @@ Training variables
 BATCH_SIZE = 32
 
 # Number of optimization steps in the given batch
-TRAINING_STEPS = 20000
+TRAINING_STEPS = 5000
 
 # Number of steps to run before computing the evaluation data
 EVALUATION_INTERVAL = 500
@@ -19,7 +19,7 @@ EVALUATION_ITERATIONS = 200
 LEARNING_RATE = 1e-3
 
 # The number of characters to sample from the model
-SAMPLING_SIZE = 200
+SAMPLING_SIZE = 1000
 
 """
 Data variables

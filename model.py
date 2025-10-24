@@ -2,7 +2,47 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-from variables import BLOCK_SIZE, N_EMBEDDINGS, VOCABULARY_SIZE, device
+from variables import BLOCK_SIZE, N_EMBEDDINGS, VOCABULARY_SIZE, device, DROPOUT
+
+class Head(nn.Module):
+  """
+  Single head of self-attention
+  """
+  def __init__(self, head_size: int):
+    super().__init__()
+
+    self.head_size = head_size
+
+    # Projects input embeddings into key space used to measure similarity with queries
+    self.key = nn.Linear(N_EMBEDDINGS, self.head_size, bias=False)
+
+    # Projects input embeddings into query space to compute attention scores against keys
+    self.query = nn.Linear(N_EMBEDDINGS, self.head_size, bias=False)
+
+    # Projects input embeddings into value space (the actual information to be aggregated)
+    self.value = nn.Linear(N_EMBEDDINGS, self.head_size, bias=False)
+
+    # Lower-triangular mask to prevent tokens from attending to future positions
+    self.register_buffer('tril', torch.tril(torch.ones(BLOCK_SIZE, BLOCK_SIZE)))
+
+  def forward(self, encoded_words: torch.Tensor):
+    # batch size, context size, features length
+    _, c, _ = encoded_words.shape
+
+    # Compute the weight matrices
+    key = self.key(encoded_words) # (b, c, f)
+    query = self.query(encoded_words) # (b, c, f)
+
+    # Compute the attention scores
+    scores = query @ key.transpose(-2, -1) * self.head_size**-0.5 # (b, c, f) @ (b, f, c) -> (b, c, c)
+    scores = scores.masked_fill(self.tril[:c, :c] == 0, float('-inf'))
+    scores = F.softmax(scores, dim=-1)
+
+    # Compute the relationship strenght between the given values and the scores
+    value = self.value(encoded_words) # (b, c, f)
+    attention = scores @ value # (b, c, c) @ (b, c, f) -> (b, c, f)
+
+    return attention
 
 
 class BigramLanguageModel(nn.Module):
@@ -15,6 +55,9 @@ class BigramLanguageModel(nn.Module):
 
     # Encodes the position of each token in the secuence.
     self.position_embeddings = nn.Embedding(BLOCK_SIZE, N_EMBEDDINGS)
+
+    # Encodes the information of the input data of previous tokens as context
+    self.self_attention_head = Head(N_EMBEDDINGS)
 
     # Language modeling head (output layer). It converts the high-dimensional
     # embeddings into a probability distribution over the vocabulary to predict
@@ -40,6 +83,9 @@ class BigramLanguageModel(nn.Module):
 
     # Agregate the embeddings into a single learnable set of features
     combined_embeddings = token_embeddings + position_embeddings # (b, c, f)
+
+    # Encode the information of previous tokens in a data dependent way
+    combined_embeddings = self.self_attention_head(combined_embeddings) # (b, c, f)
 
     # Decode the given features to a series of scores for next token prediction
     logits = self.lm_head(combined_embeddings) # (b, c, VOCABULARY_SIZE)
