@@ -10,11 +10,12 @@ torch.manual_seed(1337) # For reproducibility
 
 def main():
   """
-  10. Basic model + identities + positions + Transformer blocks + residual connections + LayerNorm
+  11. Basic model + identities + positions + Transformer blocks + residual connections + LayerNorm + Dropout
 
-  LayerNorm normalizes the features to prevent issues such as exploding gradients in the
-  network. Notice how it helps the model converge slightly better, reaching a lower
-  loss (compare output 9 with output 10).
+  With the scaling of the model, the output now resembles Shakespeare’s writing
+  much more closely.
+
+  Look how much we’ve reduced the model’s loss during training!
   """
   global device
 

@@ -4,7 +4,8 @@ import torch
 Training variables
 """
 # Number of samples per gradiente update
-BATCH_SIZE = 32
+# Increased value from 32
+BATCH_SIZE = 64
 
 # Number of optimization steps in the given batch
 TRAINING_STEPS = 5000
@@ -16,34 +17,36 @@ EVALUATION_INTERVAL = 500
 EVALUATION_ITERATIONS = 200
 
 # It's the size of the update after a single iteration of gradient descente
-LEARNING_RATE = 1e-3
+# The learning rate went from 1e-3 to this value to make smaller changes during optimization
+LEARNING_RATE = 3e-4
 
 # The number of characters to sample from the model
-SAMPLING_SIZE = 1000
+SAMPLING_SIZE = 10000
 
 """
 Data variables
 """
 # The context lenght of the model
-BLOCK_SIZE = 8
+BLOCK_SIZE = 256
 
 # The number of unique characters recognized by the model (See the Data class for more info)
 VOCABULARY_SIZE = 65 
 
 # Size of the embeddings used to encode various kinds of information related to the data
-N_EMBEDDINGS = 32
+# Increased value from 32
+N_EMBEDDINGS = 384
 
 """
 Network configuration
 """
 # Number of self attention blocks
-N_LAYERS = None 
+N_LAYERS = 6
 
 # Number of self attention heads
-N_HEAD = None
+N_HEAD = 6 # Because N_EMBEDDINGS // N_HEAD = 384 / 6 = 64 parameters on each head
 
-# The percentage of neurons to trim from the network for regularization
-DROPOUT = None
+# The percentage of neurons to trim from the network for regularization on every forward-backward pass
+DROPOUT = 0.2
 
 # Device name (to choose the best machine to run the code)
 device = None

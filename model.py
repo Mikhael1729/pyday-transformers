@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-from variables import BLOCK_SIZE, N_EMBEDDINGS, VOCABULARY_SIZE, device, DROPOUT
+from variables import BLOCK_SIZE, N_EMBEDDINGS, VOCABULARY_SIZE, device, N_LAYERS, N_HEAD, DROPOUT
 
 
 class Block(nn.Module):
@@ -45,7 +45,8 @@ class Feedforward(nn.Module):
     self.network = nn.Sequential(
       nn.Linear(n_embeddings, 4 * n_embeddings),
       nn.ReLU(),
-      nn.Linear(4 * N_EMBEDDINGS, N_EMBEDDINGS) # Projection layer maps the output into the same shape as the residual pathway to perform the sum operation
+      nn.Linear(4 * N_EMBEDDINGS, N_EMBEDDINGS), # Projection layer maps the output into the same shape as the residual pathway to perform the sum operation
+      nn.Dropout(DROPOUT),
     )
 
   def forward(self, encoded_words: torch.Tensor):
@@ -70,12 +71,14 @@ class MultiheadAttention(nn.Module):
     # the heads into a unified representation.
     self.projection = nn.Linear(N_EMBEDDINGS, N_EMBEDDINGS)
 
+    self.dropout = nn.Dropout(DROPOUT)
+
   def forward(self, encoded_words: torch.Tensor):
     # The concatenation is done in the features or channel dimension
     output = torch.cat([head(encoded_words) for head in self.heads], dim=-1)
 
     # The projection is the linear transformation of the output of the previous layer
-    output = self.projection(output)
+    output = self.dropout(self.projection(output))
 
     return output
 
@@ -101,6 +104,8 @@ class Head(nn.Module):
     # Lower-triangular mask to prevent tokens from attending to future positions
     self.register_buffer('tril', torch.tril(torch.ones(BLOCK_SIZE, BLOCK_SIZE)))
 
+    self.dropout = nn.Dropout(DROPOUT)
+
   def forward(self, encoded_words: torch.Tensor):
     # batch size, context size, features length
     _, c, _ = encoded_words.shape
@@ -109,10 +114,11 @@ class Head(nn.Module):
     key = self.key(encoded_words) # (b, c, f)
     query = self.query(encoded_words) # (b, c, f)
 
-    # Compute the attention scores
+    # Compute the attention scores or afinities
     scores = query @ key.transpose(-2, -1) * self.head_size**-0.5 # (b, c, f) @ (b, f, c) -> (b, c, c)
     scores = scores.masked_fill(self.tril[:c, :c] == 0, float('-inf'))
     scores = F.softmax(scores, dim=-1)
+    scores = self.dropout(scores)
 
     # Compute the relationship strenght between the given values and the scores
     value = self.value(encoded_words) # (b, c, f)
@@ -133,12 +139,10 @@ class BigramLanguageModel(nn.Module):
     self.position_embeddings = nn.Embedding(BLOCK_SIZE, N_EMBEDDINGS)
 
     # Performs the extraction of contextual information and the analysis of it
-    self.blocks = nn.Sequential(
-      Block(N_EMBEDDINGS, n_heads=4),
-      Block(N_EMBEDDINGS, n_heads=4),
-      Block(N_EMBEDDINGS, n_heads=4),
-      nn.LayerNorm(N_EMBEDDINGS),
-    )
+    self.blocks = nn.Sequential(*[Block(N_EMBEDDINGS, n_heads=N_HEAD) for _ in range(N_LAYERS)])
+
+    # Ensures the features are unit gaussian with respect to the mean
+    self.layer_norm_final = nn.LayerNorm(N_EMBEDDINGS)
 
     # Language modeling head (output layer). It converts the high-dimensional
     # embeddings into a probability distribution over the vocabulary to predict
@@ -165,8 +169,11 @@ class BigramLanguageModel(nn.Module):
     # Agregate the embeddings into a single learnable set of features
     combined_embeddings = token_embeddings + position_embeddings # (b, c, f)
 
-    # Includes the contextual information of the input into combined_embeddings
-    combined_embeddings = self.blocks(combined_embeddings)
+    # Include the contextual information of the input into combined_embeddings
+    combined_embeddings = self.blocks(combined_embeddings) # (b, c, f)
+
+    # Normalize the embeddings
+    combined_embeddings = self.layer_norm_final(combined_embeddings) # (b, c, f)
 
     # Decode the given features to a series of scores for next token prediction
     logits = self.lm_head(combined_embeddings) # (b, c, VOCABULARY_SIZE)
