@@ -10,16 +10,11 @@ torch.manual_seed(1337) # For reproducibility
 
 def main():
   """
-  8. Basic model + identities + positions + Transformer blocks
+  9. Basic model + identities + positions + Transformer blocks + residual connections
 
-  Encapsulates the processes of context extraction and contextual analysis within a
-  single entity called a "transformer block."
-
-  We implemented three transformer blocks, but they did not improve the model’s
-  performance—quite the opposite. Why? The network is becoming relatively deep,
-  and deeper neural nets often suffer from optimization issues.
-
-  Run the code and observe how the validation loss decreases!
+  Now the validation loss has significantly being reduced and the train loss is below it
+  meaning that the network is overfitting because the network is too big and now instead
+  of making generalizations is memorizing the training data
   """
   global device
 

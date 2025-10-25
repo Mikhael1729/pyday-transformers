@@ -22,10 +22,10 @@ class Block(nn.Module):
 
   def forward(self, encoded_words: torch.Tensor):
     # Performs the extraction of contextual information
-    encoded_words = self.self_attention(encoded_words)
+    encoded_words = encoded_words + self.self_attention(encoded_words)
 
     # Applies the analysis or computation used for next token prediction
-    encoded_words = self.feedforward(encoded_words)
+    encoded_words = encoded_words + self.feedforward(encoded_words)
 
     return encoded_words
 
@@ -38,9 +38,12 @@ class Feedforward(nn.Module):
   def __init__(self, n_embeddings: int):
     super().__init__()
 
+    # The 4 in the dimensionality is done as indicated in the relative dimensions in
+    # the paper Attention Is All You Need
     self.network = nn.Sequential(
-      nn.Linear(n_embeddings, n_embeddings),
+      nn.Linear(n_embeddings, 4 * n_embeddings),
       nn.ReLU(),
+      nn.Linear(4 * N_EMBEDDINGS, N_EMBEDDINGS) # Projection layer maps the output into the same shape as the residual pathway to perform the sum operation
     )
 
   def forward(self, encoded_words: torch.Tensor):
@@ -59,9 +62,20 @@ class MultiheadAttention(nn.Module):
     # weight for predicting the next token.
     self.heads = nn.ModuleList([Head(head_size) for _ in range(num_heads)])
 
+    # The projection linearly combines the outputs of all self-attention heads,
+    # bringing them back to the model's embedding dimension so they can be added
+    # to the residual stream. It also integrates the information extracted by
+    # the heads into a unified representation.
+    self.projection = nn.Linear(N_EMBEDDINGS, N_EMBEDDINGS)
+
   def forward(self, encoded_words: torch.Tensor):
     # The concatenation is done in the features or channel dimension
-    return torch.cat([head(encoded_words) for head in self.heads], dim=-1) 
+    output = torch.cat([head(encoded_words) for head in self.heads], dim=-1)
+
+    # The projection is the linear transformation of the output of the previous layer
+    output = self.projection(output)
+
+    return output
 
 
 class Head(nn.Module):
