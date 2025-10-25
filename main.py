@@ -10,11 +10,11 @@ torch.manual_seed(1337) # For reproducibility
 
 def main():
   """
-  9. Basic model + identities + positions + Transformer blocks + residual connections
+  10. Basic model + identities + positions + Transformer blocks + residual connections + LayerNorm
 
-  Now the validation loss has significantly being reduced and the train loss is below it
-  meaning that the network is overfitting because the network is too big and now instead
-  of making generalizations is memorizing the training data
+  LayerNorm normalizes the features to prevent issues such as exploding gradients in the
+  network. Notice how it helps the model converge slightly better, reaching a lower
+  loss (compare output 9 with output 10).
   """
   global device
 

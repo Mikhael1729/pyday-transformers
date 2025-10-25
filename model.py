@@ -19,13 +19,15 @@ class Block(nn.Module):
 
     self.self_attention = MultiheadAttention(n_heads, head_size)
     self.feedforward = Feedforward(n_embeddings)
+    self.layernorm1 = nn.LayerNorm(n_embeddings)
+    self.layernorm2 = nn.LayerNorm(n_embeddings)
 
   def forward(self, encoded_words: torch.Tensor):
     # Performs the extraction of contextual information
-    encoded_words = encoded_words + self.self_attention(encoded_words)
+    encoded_words = encoded_words + self.self_attention(self.layernorm1(encoded_words))
 
     # Applies the analysis or computation used for next token prediction
-    encoded_words = encoded_words + self.feedforward(encoded_words)
+    encoded_words = encoded_words + self.feedforward(self.layernorm2(encoded_words))
 
     return encoded_words
 
@@ -135,6 +137,7 @@ class BigramLanguageModel(nn.Module):
       Block(N_EMBEDDINGS, n_heads=4),
       Block(N_EMBEDDINGS, n_heads=4),
       Block(N_EMBEDDINGS, n_heads=4),
+      nn.LayerNorm(N_EMBEDDINGS),
     )
 
     # Language modeling head (output layer). It converts the high-dimensional
