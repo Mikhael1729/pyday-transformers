@@ -1,6 +1,6 @@
 # Transformers
 
-This repository contains the resources to follow the Transformers talk at PyDay. The commits are organized in the same order as the talk. If you wish to observe the architecture construction as performed during the talk, you simply need to traverse the commit history chronologically, from oldest to newest, to see the implementation from scratch.
+This repository contains the resources to follow the Transformers talk at PyDay. It implements a decoder-only Transformer designed to generate text in the style of Shakespeare. The commits are organized in the same order as the talk. If you wish to observe the architecture construction as performed during the talk, you simply need to traverse the commit history chronologically, from oldest to newest, to see the implementation from scratch.
 
 ## Dependencies
 
