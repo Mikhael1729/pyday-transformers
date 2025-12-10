@@ -1,31 +1,30 @@
 # Transformers
 
-En este repositorio se encuentran los recursos para seguir la charla acerca de Transformers en PyDay. Los commits en el mismo se encuentran organizados en el mismo orden de la charla. Si deseas observar la construcción de la arquitectura que se realizará durante la charla, solo debes de revertir el historial de commits de manera cronológica, desde el más antiguo hasta el más reciente para ver su implementación desde cero.
+This repository contains the resources to follow the Transformers talk at PyDay. The commits are organized in the same order as the talk. If you wish to observe the architecture construction as performed during the talk, you simply need to traverse the commit history chronologically, from oldest to newest, to see the implementation from scratch.
 
-## Dependencias
+## Dependencies
 
-Debes tener instalado [Miniconda](https://docs.conda.io/en/latest/miniconda.html).
+You must have [Miniconda](https://docs.conda.io/en/latest/miniconda.html) installed.
 
-## Instalación
+## Installation
 
-1. Descarga e instala las dependencias usando conda:
+1. Download and install the dependencies using conda:
 
     ```bash
     conda env create -f environment.yml
     ```
 
-2. Activa las dependencias ejecutando:
+2. Activate the dependencies by executing:
 
     ```bash
     conda activate transformers-pyday
     ```
 
-> Si usas VSCode, es muy probable que desees que el editor reconozca las dependencias que acabas de instalar. Para hacerlo, solo corre el comando `Ctrl + Shift + P` (o `Cmd + Shift + P` en macOS) y selecciona la opción "Select Interpreter"; dentro, escoge `transformers-pyday`. De esta forma, el IntelliSense de VSCode puede reconocer dependencias como PyTorch en el código.
+> If you use VSCode, you likely want the editor to recognize the dependencies you just installed. To do this, run the command `Ctrl + Shift + P` (or `Cmd + Shift + P` on macOS) and choose the "Select Interpreter" option; then select `transformers-pyday`. This way, VSCode's IntelliSense can recognize dependencies like PyTorch in the code.
 
-## Ejecución del código
+## Running the Code
 
-Para ejecutar el código, utiliza:
+To execute the code, use:
 
 ```bash
 python main.py
-```
